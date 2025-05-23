@@ -1,9 +1,6 @@
 package org.benjamin.kvdb;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,24 +13,25 @@ public class Database<K, V> {
     public String id;
     public String defaultPath;
     public Database(String id, String defaultPath) {
+        try {
+            PrintWriter writer = new PrintWriter(new File(defaultPath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.blocks = new ArrayList<>();
         this.id = id;
         this.defaultPath = defaultPath;
     }
 
     public void save(DataBlock<K, V> block) {
-        this.blocks.add(block);
-        Gson gson = new Gson();
-        Map<String, String> map = new HashMap<>();
-        map.put(block.getKey().toString(), block.getValue().toString());
-
-        String json = gson.toJson(map);
-
-        try (FileWriter writer = new FileWriter(this.defaultPath)){
-            writer.write(json);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (DataBlock<K, V> kvDataBlock : this.blocks) {
+            if (kvDataBlock.getKey() == block.getKey()) {
+                return;
+            }
         }
+        this.blocks.add(block);
+        this.sync();
+
 
     }
 
@@ -60,20 +58,7 @@ public class Database<K, V> {
             if (this.blocks.get(i).getKey() == key) {
 
                 this.blocks.remove(i);
-                try (FileReader reader = new FileReader(this.defaultPath)) {
-                    JsonElement root = JsonParser.parseReader(reader);
-
-                    if (root.isJsonObject()) {
-                        JsonObject obj = root.getAsJsonObject();
-
-                        obj.remove(key.toString());
-
-                        try (FileWriter writer = new FileWriter(this.defaultPath)) {
-                            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                            gson.toJson(obj, writer);
-                        }
-                    }
-                }
+                this.sync();
                 return 0;
             }
         }

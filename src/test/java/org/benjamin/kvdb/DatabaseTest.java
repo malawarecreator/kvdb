@@ -10,7 +10,8 @@ class DatabaseTest {
     void databaseSave() {
         Database<String, Integer> db = new Database<>("test db", "C:/Users/benjamin/test.json");
         db.save(new DataBlock<>("age", 13));
-        System.out.println(db.get("age"));
+        db.save(new DataBlock<>("grade", 7));
+
     }
 
 }
