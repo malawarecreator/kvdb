@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database<K, V> {
-    private ArrayList<DataBlock<K, V>> blocks;
+    private final ArrayList<DataBlock<K, V>> blocks;
     public String id;
 
     public Database(String id) {
