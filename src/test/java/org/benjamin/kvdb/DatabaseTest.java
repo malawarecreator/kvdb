@@ -2,16 +2,16 @@ package org.benjamin.kvdb;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 class DatabaseTest {
     @Test
-    void databaseSave() {
-        Database<String, Integer> db = new Database<>("test db", "C:/Users/benjamin/test.json");
-        db.save(new DataBlock<>("age", 13));
-        db.save(new DataBlock<>("grade", 7));
-
+    void databaseSave() throws IOException {
+        Database<String, Integer> db = new Database<>("stuff", "C:/Users/benjamin/test.json", false, Integer.class);
+        db.save(new DataBlock<>("stuff", 1));
+        
     }
 
 }
